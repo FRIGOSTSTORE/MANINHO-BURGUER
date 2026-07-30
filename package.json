@@ -1,0 +1,9 @@
+{
+  "name": "maninho-burguer-delivery",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site de delivery da Maninho Burguer pronto para Vercel",
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
