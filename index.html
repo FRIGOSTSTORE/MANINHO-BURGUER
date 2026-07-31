@@ -165,6 +165,19 @@
     .hero h1{font-size:30px}
     .two{grid-template-columns:1fr}
   }
+  /* ===== Painel de leads em tempo real ===== */
+  .admin-fab{position:fixed;left:18px;bottom:18px;z-index:80;background:#111;color:#fff;border:0;border-radius:999px;padding:12px 16px;font-weight:800;box-shadow:var(--shadow);cursor:pointer}
+  .admin-panel{position:fixed;inset:0;background:#f6f7fb;z-index:120;display:none;color:#202124;overflow:auto}
+  .admin-gate{position:fixed;inset:0;z-index:119;display:none;place-items:center;background:rgba(0,0,0,.55);padding:20px}.admin-gate.open{display:grid}.gate-card{width:min(380px,100%);background:#fff;border-radius:14px;padding:22px;box-shadow:var(--shadow)}.gate-card h3{margin-bottom:8px}.gate-card p{color:#5f6368;font-size:14px;margin-bottom:14px}.gate-card input{width:100%;border:1px solid #dadce0;border-radius:10px;padding:12px;font-size:16px;margin-bottom:12px}.gate-error{display:none;color:#d93025;font-size:13px;font-weight:700;margin-bottom:10px}
+  .admin-panel.open{display:block}
+  .admin-top{position:sticky;top:0;background:#fff;border-bottom:1px solid #e0e3eb;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:2}
+  .admin-title{display:flex;align-items:center;gap:10px;font-weight:900}.live-dot{width:10px;height:10px;background:#1a73e8;border-radius:99px;box-shadow:0 0 0 6px rgba(26,115,232,.12);animation:pulse 1.6s infinite}@keyframes pulse{50%{transform:scale(.8);opacity:.7}}
+  .admin-close{border:1px solid #dadce0;background:#fff;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}
+  .admin-wrap{max-width:1180px;margin:0 auto;padding:18px}.admin-hero{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-bottom:14px}.admin-card{background:#fff;border:1px solid #e0e3eb;border-radius:10px;padding:18px;box-shadow:0 1px 2px rgba(60,64,67,.08)}
+  .admin-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}.metric-label{font-size:12px;color:#5f6368;text-transform:uppercase;font-weight:800;border-bottom:1px dashed #cfd4dc;display:inline-block}.metric-value{font-size:34px;font-weight:500;margin-top:4px}.metric-sub{font-size:12px;color:#5f6368}.bar-chart{height:108px;display:flex;align-items:end;gap:5px;border-bottom:1px solid #dfe3ea;padding-top:10px}.bar-chart span{flex:1;background:#1a73e8;min-height:3px;border-radius:2px 2px 0 0}.mapbox{height:210px;border-radius:8px;background:linear-gradient(135deg,#eef3fb,#fff);position:relative;overflow:hidden}.mapbox:before{content:'';position:absolute;inset:18px 30px;background:radial-gradient(circle at 62% 28%,#d9e7fb 0 6%,transparent 7%),radial-gradient(circle at 52% 55%,#d9e7fb 0 12%,transparent 13%),radial-gradient(circle at 42% 68%,#d9e7fb 0 10%,transparent 11%);opacity:.9}.bubble{position:absolute;background:rgba(26,115,232,.72);border-radius:50%;border:2px solid rgba(255,255,255,.8)}
+  .admin-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.admin-card h3{font-size:15px;margin-bottom:12px}.list-row{display:flex;justify-content:space-between;border-bottom:1px solid #eef0f4;padding:9px 0;font-size:14px;gap:12px}.list-row:last-child{border-bottom:0}.muted{color:#5f6368}.lead-table{grid-column:1/-1;overflow:auto}.lead-table table{width:100%;border-collapse:collapse;font-size:14px}.lead-table th,.lead-table td{text-align:left;border-bottom:1px solid #eef0f4;padding:10px;white-space:nowrap}.lead-table th{color:#5f6368;font-size:12px;text-transform:uppercase}.status-new{color:#1a73e8;font-weight:800}.admin-actions{display:flex;gap:8px;flex-wrap:wrap}.admin-btn{border:1px solid #dadce0;background:#fff;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer}.admin-btn.primary{background:#1a73e8;color:#fff;border-color:#1a73e8}
+  @media(max-width:850px){.admin-hero,.admin-grid{grid-template-columns:1fr}.admin-metrics{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -267,6 +280,45 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="sheet" id="sheet"></div>
 </div>
 
+<div class="admin-gate" id="adminGate"><div class="gate-card"><h3>Acesso restrito</h3><p>Digite a senha para abrir o painel de leads.</p><input id="adminPass" type="password" placeholder="Senha do painel" onkeydown="if(event.key===&#39;Enter&#39;)checkAdminPass()"><div class="gate-error" id="gateError">Senha incorreta.</div><div class="admin-actions"><button class="admin-btn primary" onclick="checkAdminPass()">Entrar</button><button class="admin-btn" onclick="closeAdminGate()">Cancelar</button></div></div></div>
+<div class="admin-panel" id="adminPanel" aria-label="Painel de leads em tempo real">
+  <div class="admin-top">
+    <div class="admin-title"><span class="live-dot"></span> Painel em tempo real — Maninho Burguer</div>
+    <div class="admin-actions">
+      <button class="admin-btn" onclick="exportLeadsCSV()">Exportar CSV</button>
+      <button class="admin-btn" onclick="seedDemoLead()">Simular lead</button>
+      <button class="admin-close" onclick="closeAdminPanel()">Fechar</button>
+    </div>
+  </div>
+  <div class="admin-wrap">
+    <div class="admin-hero">
+      <div class="admin-card">
+        <div style="display:flex;gap:34px;flex-wrap:wrap">
+          <div><div class="metric-label">Usuários ativos nos últimos 30 minutos</div><div class="metric-value" id="m30">0</div></div>
+          <div><div class="metric-label">Usuários ativos nos últimos 5 minutos</div><div class="metric-value" id="m5">0</div></div>
+        </div>
+        <div class="metric-label" style="margin-top:14px">Usuários ativos por minuto</div>
+        <div class="bar-chart" id="minuteBars"></div>
+      </div>
+      <div class="admin-card"><h3>Mapa aproximado dos acessos</h3><div class="mapbox" id="mapBox"></div></div>
+    </div>
+    <div class="admin-metrics">
+      <div class="admin-card"><div class="metric-label">Leads hoje</div><div class="metric-value" id="leadsToday">0</div><div class="metric-sub">formulários enviados</div></div>
+      <div class="admin-card"><div class="metric-label">Cliques em compra</div><div class="metric-value" id="clicksBuy">0</div><div class="metric-sub">add carrinho + checkout</div></div>
+      <div class="admin-card"><div class="metric-label">Pedidos</div><div class="metric-value" id="ordersToday">0</div><div class="metric-sub">pedidos confirmados</div></div>
+      <div class="admin-card"><div class="metric-label">Faturamento potencial</div><div class="metric-value" id="revenueToday">R$ 0</div><div class="metric-sub">total dos leads</div></div>
+    </div>
+    <div class="admin-grid">
+      <div class="admin-card"><h3>Origem dos acessos</h3><div id="sourceList"></div></div>
+      <div class="admin-card"><h3>Cidades</h3><div id="cityList"></div></div>
+      <div class="admin-card"><h3>Eventos recentes</h3><div id="eventList"></div></div>
+      <div class="admin-card lead-table"><h3>Últimos leads</h3>
+        <table><thead><tr><th>Hora</th><th>Nome</th><th>WhatsApp</th><th>Cidade</th><th>Pedido</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody id="leadRows"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -370,7 +422,7 @@ function renderGrid(){
       </div>
     </article>`).join('');
 }
-function addToCart(id){ cart[id]=(cart[id]||0)+1; updateCart(); const c=COMBOS.find(x=>x.id===id); showToast(`\u{1F6D2} ${c.name} adicionado!`); fbTrack('AddToCart', { content_type:'product', content_ids:[String(c.id)], content_name:c.name, contents:[{id:String(c.id), quantity:cart[id], item_price:c.price}], value:c.price, currency:'BRL' }); }
+function addToCart(id){ cart[id]=(cart[id]||0)+1; updateCart(); const c=COMBOS.find(x=>x.id===id); trackLocal('add_carrinho',{produto:c.name,valor:c.price}); showToast(`\u{1F6D2} ${c.name} adicionado!`); fbTrack('AddToCart', { content_type:'product', content_ids:[String(c.id)], content_name:c.name, contents:[{id:String(c.id), quantity:cart[id], item_price:c.price}], value:c.price, currency:'BRL' }); }
 function changeQty(id,d){ cart[id]=(cart[id]||0)+d; if(cart[id]<=0) delete cart[id]; updateCart(); }
 function removeItem(id){ delete cart[id]; updateCart(); }
 function cartCount(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
@@ -413,6 +465,7 @@ function openCart(){ fbTrack('ViewContent', { content_type:'product', content_id
 function closeCart(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
 
 function openCheckout(){
+  trackLocal('checkout_aberto',{total:subtotal()+FEE,itens:cartCount()});
   if(cartCount()===0) return;
   const sub = subtotal();
   fbTrack('InitiateCheckout', { content_type:'product', content_ids:fbCartIds(), contents:fbCartContents(), num_items:cartCount(), value:sub+FEE, currency:'BRL' });
@@ -520,6 +573,8 @@ function placeOrder(e){
   const oid = 'FG' + Math.floor(100000 + Math.random()*900000);
   fbTrack('AddPaymentInfo', { content_type:'product', content_ids:fbCartIds(), contents:fbCartContents(), num_items:cartCount(), value:total, currency:'BRL', order_id:oid });
   fbTrack('Lead', { content_name:'Checkout Maninho Burguer', value:total, currency:'BRL', order_id:oid });
+  registerLeadLocal({hora:new Date().toISOString(), name:name, phone:(document.getElementById('f-phone')||{}).value||'', city:(document.getElementById('f-city')||{}).value||currentCity(), items:Object.entries(cart).map(([id,q])=>{const c=COMBOS.find(x=>x.id==id);return c?`${q}x ${c.name}`:''}).filter(Boolean).join(', '), total:total, origem:trafficSource(), status:'Novo'});
+  trackLocal('pedido_confirmado',{order_id:oid,total:total,pagamento:pay});
   if(pay==='Pix'){ startPix(oid, total, name); }
   else { showConfirm(oid, pay); }
 }
@@ -715,6 +770,45 @@ function refineCity(){
       .catch(()=>{});
   }, function(){}, {enableHighAccuracy:true, timeout:10000, maximumAge:0});
 }
+
+// ===== Analytics local + painel de leads em tempo real =====
+const ANALYTICS_KEY='mb_analytics_v1';
+const SESSION_ID=sessionStorage.mb_session_id||(sessionStorage.mb_session_id='s'+Date.now()+Math.random().toString(36).slice(2));
+function getAnalytics(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'{"events":[],"leads":[]}')}catch(e){return {events:[],leads:[]}}}
+function saveAnalytics(d){d.events=(d.events||[]).slice(-900);d.leads=(d.leads||[]).slice(-300);localStorage.setItem(ANALYTICS_KEY,JSON.stringify(d));}
+function trafficSource(){const r=document.referrer||''; if(r.includes('instagram'))return 'Instagram'; if(r.includes('facebook')||r.includes('fb.'))return 'Facebook'; if(r.includes('google'))return 'Google'; if(r.includes('whatsapp'))return 'WhatsApp'; if(r)return 'Referência'; return 'Direto';}
+function currentCity(){const t=(document.getElementById('locText')||{}).textContent||''; const m=t.match(/Você está em ([^.]+)/); return m?m[1].trim():'Não detectada'}
+function trackLocal(event, data={}){const db=getAnalytics();db.events.push({event,time:new Date().toISOString(),session:SESSION_ID,source:trafficSource(),city:currentCity(),page:location.pathname,data});saveAnalytics(db);renderAdminPanel();}
+function registerLeadLocal(lead){const db=getAnalytics();db.leads.unshift({...lead,time:new Date().toISOString(),source:trafficSource(),city:lead.city||currentCity(),status:'Novo'});db.events.push({event:'lead_recebido',time:new Date().toISOString(),session:SESSION_ID,source:trafficSource(),city:lead.city||currentCity(),data:lead});saveAnalytics(db);renderAdminPanel();}
+const ADMIN_PASSWORD='1234'; // altere aqui se quiser outra senha
+function openAdminGate(){document.getElementById('adminGate').classList.add('open');setTimeout(()=>{const i=document.getElementById('adminPass');if(i)i.focus()},50)}
+function closeAdminGate(){document.getElementById('adminGate').classList.remove('open')}
+function checkAdminPass(){const v=(document.getElementById('adminPass')||{}).value||''; if(v===ADMIN_PASSWORD){sessionStorage.mb_admin_ok='1';closeAdminGate();openAdminPanel();}else{const e=document.getElementById('gateError'); if(e)e.style.display='block';}}
+function openAdminPanel(){if(sessionStorage.mb_admin_ok!=='1'){openAdminGate();return;}document.getElementById('adminPanel').classList.add('open');renderAdminPanel();}
+function closeAdminPanel(){document.getElementById('adminPanel').classList.remove('open')}
+function checkSecretPanelUrl(){
+  const secret = location.hash === '#painel-leads' || location.search.includes('painel-leads=1') || location.pathname.toLowerCase().includes('painel-leads');
+  if(secret) setTimeout(openAdminGate,300);
+}
+(function(){
+  let seq='';
+  document.addEventListener('keydown',e=>{
+    const k=(e.key||'').toLowerCase();
+    if(k.length===1) seq=(seq+k).slice(-5);
+    if(seq==='leads') openAdminGate();
+  });
+  window.addEventListener('hashchange', checkSecretPanelUrl);
+  document.addEventListener('DOMContentLoaded', checkSecretPanelUrl);
+  checkSecretPanelUrl();
+  setTimeout(checkSecretPanelUrl,1200);
+})();
+function brlAdmin(n){return (n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function countBy(arr,fn){return arr.reduce((a,x)=>{const k=fn(x)||'Não informado';a[k]=(a[k]||0)+1;return a},{})}
+function rowsFromCounts(obj){return Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>`<div class="list-row"><span>${k}</span><b>${v}</b></div>`).join('')||'<div class="muted">Nenhum dado disponível</div>'}
+function renderAdminPanel(){const p=document.getElementById('adminPanel'); if(!p)return; const db=getAnalytics(); const now=Date.now(); const ev=db.events||[], leads=db.leads||[]; const today=new Date().toISOString().slice(0,10); const evToday=ev.filter(e=>(e.time||'').slice(0,10)===today); const leadsTodayArr=leads.filter(l=>(l.time||'').slice(0,10)===today); const active30=new Set(ev.filter(e=>now-new Date(e.time).getTime()<30*60000).map(e=>e.session)).size; const active5=new Set(ev.filter(e=>now-new Date(e.time).getTime()<5*60000).map(e=>e.session)).size; document.getElementById('m30').textContent=active30;document.getElementById('m5').textContent=active5;document.getElementById('leadsToday').textContent=leadsTodayArr.length;document.getElementById('clicksBuy').textContent=evToday.filter(e=>['add_carrinho','checkout_aberto','AddToCart'].includes(e.event)).length;document.getElementById('ordersToday').textContent=evToday.filter(e=>['pedido_confirmado','lead_recebido'].includes(e.event)).length;document.getElementById('revenueToday').textContent=brlAdmin(leadsTodayArr.reduce((s,l)=>s+(Number(l.total)||0),0)); const mins=[]; for(let i=29;i>=0;i--){const start=now-i*60000;mins.push(ev.filter(e=>{const t=new Date(e.time).getTime();return t>=start&&t<start+60000}).length)} const max=Math.max(1,...mins);document.getElementById('minuteBars').innerHTML=mins.map(v=>`<span style="height:${Math.max(3,v/max*96)}px" title="${v}"></span>`).join(''); document.getElementById('sourceList').innerHTML=rowsFromCounts(countBy(evToday,e=>e.source));document.getElementById('cityList').innerHTML=rowsFromCounts(countBy(evToday,e=>e.city));document.getElementById('eventList').innerHTML=ev.slice(-7).reverse().map(e=>`<div class="list-row"><span>${e.event}</span><span class="muted">${new Date(e.time).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')||'<div class="muted">Nenhum evento ainda</div>'; document.getElementById('leadRows').innerHTML=leads.slice(0,20).map(l=>`<tr><td>${new Date(l.time).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</td><td>${l.name||'-'}</td><td>${l.phone||'-'}</td><td>${l.city||'-'}</td><td>${l.items||'-'}</td><td>${brlAdmin(Number(l.total)||0)}</td><td class="status-new">${l.status||'Novo'}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">Nenhum lead recebido ainda</td></tr>'; const cities=Object.keys(countBy(evToday,e=>e.city)).slice(0,8);document.getElementById('mapBox').innerHTML=cities.map((c,i)=>`<span class="bubble" title="${c}" style="width:${20+i*4}px;height:${20+i*4}px;left:${25+(i*9)%55}%;top:${18+(i*13)%60}%"></span>`).join('');}
+function exportLeadsCSV(){const leads=getAnalytics().leads||[];const head=['hora','nome','whatsapp','cidade','pedido','total','origem','status'];const csv=[head.join(';')].concat(leads.map(l=>head.map(k=>'"'+String(l[k]||l.time||'').replace(/"/g,'""')+'"').join(';'))).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='leads-maninho-burguer.csv';a.click();}
+function seedDemoLead(){registerLeadLocal({name:'Cliente teste',phone:'(11) 99999-9999',city:'São Paulo',items:'Combo Transtornado',total:24.99});}
+window.addEventListener('storage',renderAdminPanel);setInterval(()=>{trackLocal('heartbeat')},60000);trackLocal('page_view');
 
 renderGrid(); updateCart(); detectCity();
 </script>
